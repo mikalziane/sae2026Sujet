@@ -147,4 +147,59 @@ public abstract class AbstractAlgorithmesGrapheTest {
                 .map(IEntite::nom)
                 .collect(Collectors.toCollection(TreeSet::new));
     }
+
+     // Test 1
+    @Test
+    void test1_appli_depend_directement_de_chenille_donc_dependance_elargie() {
+        Set<String> res = noms(
+                AlgorithmesGraphe.dependantsElargis(graphe, e("chenille.Chenille"))
+        );
+
+        assertTrue(res.contains("chenille.ihm.Appli"));
+    }
+
+    // Test 2
+    @Test
+    void test2_package_ihm_contient_appli_donc_dependance_elargie_vers_chenille() {
+        Set<String> res = noms(
+                AlgorithmesGraphe.dependantsElargis(graphe, e("chenille.Chenille"))
+        );
+
+        assertTrue(res.contains("chenille.ihm"));
+    }
+
+    // Test 3
+    @Test
+    void test3_frame_soeur_de_appli_ne_depend_pas_de_chenille() {
+        Set<String> res = noms(
+                AlgorithmesGraphe.dependantsElargis(graphe, e("chenille.Chenille"))
+        );
+
+        assertFalse(res.contains("chenille.ihm.Frame"));
+    }
+
+    // Test 4
+    @Test
+    void test4_classe_c_contenant_appli_comme_inner_classe_depend_de_chenille() {
+        IEntite c = new Entite("chenille.ihm.C", TypeEntite.CLASS);
+        graphe.ajouterEntite(c);
+        graphe.ajouterRelation(c, e("chenille.ihm.Appli"), NatureRelation.CONTIENT);
+
+        Set<String> res = noms(
+                AlgorithmesGraphe.dependantsElargis(graphe, e("chenille.Chenille"))
+        );
+
+        assertTrue(res.contains("chenille.ihm.C"));
+    }
+
+    // Test 5
+    @Test
+    void test5_chenille_ne_depend_pas_de_chenille_par_remontee_depuis_ihm() {
+        Set<String> res = noms(
+                AlgorithmesGraphe.dependantsElargis(graphe, e("chenille.Chenille"))
+        );
+
+        assertFalse(res.contains("chenille"),
+                "On ne remonte pas au-dessus d'un paquetage : chenille.ihm ne rend pas chenille dépendant.");
+    }
 }
