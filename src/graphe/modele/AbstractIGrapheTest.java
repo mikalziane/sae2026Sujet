@@ -21,11 +21,28 @@ public abstract class AbstractIGrapheTest {
     }
 
     @Test
+    void egalite_des_entites() {
+        assertTrue(entite("A", TypeEntite.CLASS).equals(entite("A", TypeEntite.CLASS)));
+        assertTrue(entite("A", TypeEntite.CLASS).equals(entite("A", TypeEntite.INTERFACE)));
+        assertFalse(entite("A", TypeEntite.CLASS).equals(entite("B", TypeEntite.CLASS)));
+    }
+
+    @Test
     void ajouterEntite_nouvelle_entite_retourne_true() {
         IGraphe g = creerGrapheVide();
         IEntite a = entite("A", TypeEntite.CLASS);
-
         assertTrue(g.ajouterEntite(a));
+    }
+
+    @Test
+    void ajouterEntite_entite_deja_presente_retourne_false() {
+        IGraphe g = creerGrapheVide();
+        IEntite a1 = entite("A", TypeEntite.CLASS);
+        assertTrue(g.ajouterEntite(a1));
+        IEntite a2 = entite("A", TypeEntite.INTERFACE); // Même nom, mais type différent
+        assertFalse(g.ajouterEntite(a2));
+        IEntite a3 = entite("A", TypeEntite.CLASS);  // Même nom et meme type
+        assertFalse(g.ajouterEntite(a3));
     }
 
     @Test
